@@ -8,6 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import createDataStore
+import io.ktor.client.engine.okhttp.OkHttp
+import networking.InsultCensorClient
+import networking.createHttpClient
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,6 +20,9 @@ class MainActivity : ComponentActivity() {
             App(
                 prefs = remember {
                     createDataStore(applicationContext)
+                },
+                client = remember {
+                    InsultCensorClient(createHttpClient(OkHttp.create()))
                 }
             )
         }
