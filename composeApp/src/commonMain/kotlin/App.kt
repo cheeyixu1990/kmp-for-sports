@@ -1,6 +1,7 @@
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +24,10 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import dependencies.MyViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -31,10 +36,14 @@ import kmpforfun.composeapp.generated.resources.compose_multiplatform
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import networking.InsultCensorClient
+import org.koin.compose.KoinContext
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
 import util.NetworkError
 import util.onError
 import util.onSuccess
 
+@OptIn(KoinExperimentalAPI::class)
 @Composable
 @Preview
 fun App(
@@ -61,6 +70,25 @@ fun App(
         }
         var errorMessage by remember {
             mutableStateOf<NetworkError?>(null)
+        }
+
+        KoinContext {
+            NavHost(
+                navController = rememberNavController(),
+                startDestination = "home"
+            ) {
+                composable(route = "home") {
+                    val viewModel = koinViewModel<MyViewModel>()
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = viewModel.getHelloWorldString()
+                        )
+                    }
+                }
+            }
         }
 
         Column(
